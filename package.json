@@ -1,0 +1,52 @@
+{
+  "name": "task-manager-app",
+  "version": "1.0.0",
+  "description": "Collaborative task management application built with modern technologies",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev --workspace=packages/web",
+    "dev:api": "npm run dev --workspace=packages/api",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=packages/web",
+    "build:api": "npm run build --workspace=packages/api",
+    "test": "npm run test --workspaces --if-present",
+    "test:web": "npm run test --workspace=packages/web",
+    "test:api": "npm run test --workspace=packages/api",
+    "lint": "npm run lint --workspaces --if-present",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rimraf node_modules",
+    "docker:build": "docker-compose -f docker/docker-compose.yml build",
+    "docker:up": "docker-compose -f docker/docker-compose.yml up",
+    "docker:down": "docker-compose -f docker/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "task-manager",
+    "collaboration",
+    "monorepo",
+    "typescript",
+    "react",
+    "express"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AtomikBioHazard/task-manager-app.git"
+  },
+  "author": "Task Manager Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AtomikBioHazard/task-manager-app/issues"
+  },
+  "homepage": "https://github.com/AtomikBioHazard/task-manager-app#readme"
+}
