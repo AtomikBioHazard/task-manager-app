@@ -119,9 +119,9 @@ Key database-related environment variables:
 
 ```bash
 # Database connection
-DATABASE_URL=postgresql://dev_user:dev_password@localhost:5432/task_manager_dev
+DATABASE_URL=postgresql://dev_user:dev_password@localhost:5433/task_manager_dev
 POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
+POSTGRES_PORT=5433
 POSTGRES_DB=task_manager_dev
 POSTGRES_USER=dev_user
 POSTGRES_PASSWORD=dev_password

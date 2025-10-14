@@ -11,9 +11,9 @@ export interface DatabaseConfig {
 }
 
 export const databaseConfig: DatabaseConfig = {
-  url: process.env.DATABASE_URL || 'postgresql://dev_user:dev_password@localhost:5432/task_manager_dev',
+  url: process.env.DATABASE_URL || 'postgresql://dev_user:dev_password@localhost:5433/task_manager_dev',
   host: process.env.POSTGRES_HOST || 'localhost',
-  port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
+  port: parseInt(process.env.POSTGRES_PORT || '5433', 10),
   database: process.env.POSTGRES_DB || 'task_manager_dev',
   user: process.env.POSTGRES_USER || 'dev_user',
   password: process.env.POSTGRES_PASSWORD || 'dev_password',

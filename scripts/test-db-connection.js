@@ -9,7 +9,7 @@ const { Client } = require('pg');
 require('dotenv').config();
 
 const config = {
-  connectionString: process.env.DATABASE_URL || 'postgresql://dev_user:dev_password@localhost:5432/task_manager_dev',
+  connectionString: process.env.DATABASE_URL || 'postgresql://dev_user:dev_password@localhost:5433/task_manager_dev',
   connectionTimeoutMillis: 10000,
 };
 
