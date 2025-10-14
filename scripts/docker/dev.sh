@@ -73,7 +73,7 @@ case "${1:-help}" in
         info "Services available at:"
         echo "  - Web: http://localhost:3000"
         echo "  - API: http://localhost:3001"
-        echo "  - Database: localhost:5432"
+        echo "  - Database: localhost:5433"
         ;;
         
     "down")
@@ -126,7 +126,7 @@ case "${1:-help}" in
         info "Starting PostgreSQL database only..."
         docker-compose up -d postgres
         success "Database started!"
-        info "Database available at: localhost:5432"
+        info "Database available at: localhost:5433"
         ;;
         
     "test-db")
