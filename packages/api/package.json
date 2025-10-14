@@ -43,5 +43,15 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "imports": {
+    "#controllers/*": "./src/controllers/*",
+    "#routes/*": "./src/routes/*",
+    "#middleware/*": "./src/middleware/*",
+    "#repositories/*": "./src/repositories/*",
+    "#utils/*": "./src/utils/*",
+    "#models/*": "./src/models/*",
+    "#config/*": "./src/config/*",
+    "#database/*": "./src/database/*"
+  }
 }
