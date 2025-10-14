@@ -185,11 +185,100 @@ npm run test                 # Run all tests
 npm run lint                 # Lint all packages
 npm run type-check           # TypeScript type checking
 
-# Docker
+# Docker (Enhanced)
+# Development
+npm run docker:dev-up        # Start development services
+npm run docker:dev-down      # Stop development services
+./scripts/docker/dev.sh      # Full development workflow
+./scripts/docker/dev.sh logs # View logs
+./scripts/docker/dev.sh shell api # Open shell in API container
+
+# Production
+npm run docker:prod-up       # Deploy production services
+npm run docker:prod-down     # Stop production services
+./scripts/docker/prod.sh health # Check service health
+./scripts/docker/prod.sh backup-db # Backup database
+
+# Traditional Docker Compose
 docker-compose up            # Start all services
 docker-compose up postgres   # Database only
 docker-compose down          # Stop all services
 docker-compose logs          # View logs
+```
+
+## Docker Configuration
+
+### Development vs Production
+
+The project includes sophisticated Docker configurations for both environments:
+
+**Development Features:**
+- Hot reloading with volume mounts
+- Development dependencies included
+- Exposed ports for debugging
+- Optimized for fast iteration
+
+**Production Features:**  
+- Multi-stage builds for smaller images
+- Only production dependencies
+- Enhanced security with non-root users
+- Comprehensive health checks
+- Logging configuration
+- Restart policies
+
+### Docker Compose Files
+
+- `docker/docker-compose.yml` - Development configuration
+- `docker/docker-compose.prod.yml` - Production configuration
+
+### Multi-target Dockerfiles
+
+Both `Dockerfile.api` and `Dockerfile.web` support multiple build targets:
+
+```bash
+# Development build
+docker build --target development -f docker/Dockerfile.api .
+
+# Production build  
+docker build --target production -f docker/Dockerfile.api .
+```
+
+### Docker Network
+
+Services communicate via a custom bridge network (`task-manager-network`) with:
+- Service discovery by name
+- Isolated subnet (172.20.0.0/16)
+- PostgreSQL accessible via `postgres` hostname
+
+### Volume Management
+
+- `postgres_data`: Persistent database storage
+- `api_logs`: Application logs (production)
+- Development: Source code mounted for hot reloading
+
+### Health Checks
+
+All services include comprehensive health checks:
+- PostgreSQL: `pg_isready` command
+- API: HTTP health endpoint (`/health`)
+- Web: HTTP availability check
+
+### Docker Workflow Scripts
+
+**Development**: `./scripts/docker/dev.sh`
+- Start/stop services
+- View logs
+- Database operations
+- Container shell access
+- Resource cleanup
+
+**Production**: `./scripts/docker/prod.sh`
+- Deploy services
+- Health monitoring
+- Database backup/restore
+- Rolling updates
+- Service management
+
 ```
 
 ## Deployment
