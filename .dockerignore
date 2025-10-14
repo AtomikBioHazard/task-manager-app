@@ -30,3 +30,8 @@ out
 storybook-static
 test-results/
 junit.xml
+
+# Project documentation and status (not needed in Docker containers)
+status/
+00-requirements/
+01-planning/
