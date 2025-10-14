@@ -1,0 +1,114 @@
+version: '3.8'
+
+# Production Docker Compose Configuration
+# Usage: docker-compose -f docker/docker-compose.prod.yml up -d
+
+networks:
+  task-manager-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+services:
+  # PostgreSQL database (production)
+  postgres:
+    image: postgres:16-alpine
+    container_name: task-manager-db-prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-task_manager_prod}
+      POSTGRES_USER: ${POSTGRES_USER:-prod_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - task-manager-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prod_user} -d ${POSTGRES_DB:-task_manager_prod}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # Backend API service (production)
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+      target: production
+    container_name: task-manager-api-prod
+    restart: always
+    ports:
+      - "${API_PORT:-3001}:3001"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-prod_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-task_manager_prod}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: 3001
+      FRONTEND_URL: ${FRONTEND_URL}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+    volumes:
+      - api_logs:/app/logs
+    networks:
+      - task-manager-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # Frontend web service (production)
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      target: production
+    container_name: task-manager-web-prod
+    restart: always
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+    networks:
+      - task-manager-network
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+volumes:
+  postgres_data:
+    driver: local
+  api_logs:
+    driver: local

@@ -38,7 +38,6 @@
     // Emit Configuration
     "noEmit": true,
     "preserveConstEnums": true,
-    "importsNotUsedAsValues": "error",
     
     // Type Definitions
     "types": ["vite/client"],

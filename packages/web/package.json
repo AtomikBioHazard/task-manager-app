@@ -19,7 +19,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
-    "@task-manager/shared": "workspace:*"
+    "@task-manager/shared": "*"
   },
   "devDependencies": {
     "@types/react": "^18.2.48",
@@ -42,5 +42,15 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "imports": {
+    "#components/*": "./src/components/*",
+    "#pages/*": "./src/pages/*",
+    "#hooks/*": "./src/hooks/*",
+    "#context/*": "./src/context/*",
+    "#utils/*": "./src/utils/*",
+    "#types/*": "./src/types/*",
+    "#services/*": "./src/services/*",
+    "#assets/*": "./src/assets/*"
   }
 }
