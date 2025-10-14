@@ -26,7 +26,13 @@
     "docker:build": "docker-compose -f docker/docker-compose.yml build",
     "docker:up": "docker-compose -f docker/docker-compose.yml up",
     "docker:down": "docker-compose -f docker/docker-compose.yml down",
-    "docker:postgres": "docker-compose -f docker/docker-compose.yml up postgres -d"
+    "docker:postgres": "docker-compose -f docker/docker-compose.yml up postgres -d",
+    "docker:dev": "./scripts/docker/dev.sh",
+    "docker:prod": "./scripts/docker/prod.sh",
+    "docker:dev-up": "./scripts/docker/dev.sh up",
+    "docker:dev-down": "./scripts/docker/dev.sh down",
+    "docker:prod-up": "./scripts/docker/prod.sh up",
+    "docker:prod-down": "./scripts/docker/prod.sh down"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
