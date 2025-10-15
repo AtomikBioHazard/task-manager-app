@@ -122,3 +122,7 @@ lib/
 # Test outputs
 test-results/
 junit.xml
+
+# Documentation files (managed externally)
+*.md
+!README.md
