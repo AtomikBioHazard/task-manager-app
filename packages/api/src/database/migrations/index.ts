@@ -5,7 +5,7 @@
  * for running them in the correct order.
  */
 
-import type { Database, Migration } from '../types';
+import type { Database, Migration } from '#database/types';
 
 // Import all migration modules
 import * as migration001 from './001_create_users_table';

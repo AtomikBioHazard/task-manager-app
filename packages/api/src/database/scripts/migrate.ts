@@ -12,18 +12,29 @@
  *   npm run migrate:reset     # Reset database (rollback all)
  */
 
-import { Pool } from 'pg';
-import { MigrationRunner } from '../migrations/index.js';
-import type { Database } from '../types.js';
+// Load environment variables from .env file
+import 'dotenv/config';
 
-// Database configuration from environment
+import { Pool } from 'pg';
+import { MigrationRunner } from '#database/migrations/index.js';
+import type { Database } from '#database/types.js';
+
+// Database configuration from environment variables only
 const getDatabaseConfig = () => {
+  // Validate required environment variables
+  const requiredEnvVars = ['POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DB', 'POSTGRES_USER', 'POSTGRES_PASSWORD'];
+  const missing = requiredEnvVars.filter(varName => !process.env[varName]);
+  
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}. Please set these in your .env file.`);
+  }
+
   const config = {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5433'),
-    database: process.env.DB_NAME || 'taskmanager_dev',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
+    host: process.env.POSTGRES_HOST!,
+    port: parseInt(process.env.POSTGRES_PORT!),
+    database: process.env.POSTGRES_DB!,
+    user: process.env.POSTGRES_USER!,
+    password: process.env.POSTGRES_PASSWORD!,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   };
 

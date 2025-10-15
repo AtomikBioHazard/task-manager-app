@@ -9,7 +9,7 @@
  * - Comprehensive indexes for task management queries
  */
 
-import type { Database } from '../types';
+import type { Database } from '#database/types';
 
 export async function up(db: Database): Promise<void> {
   await db.query(`
