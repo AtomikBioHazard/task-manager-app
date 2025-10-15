@@ -83,9 +83,9 @@ export async function up(db: Database): Promise<void> {
     -- Create index for completed tasks with completion date
     CREATE INDEX idx_tasks_completed ON tasks(completed_at) WHERE status = 'completed';
     
-    -- Create index for overdue tasks
-    CREATE INDEX idx_tasks_overdue ON tasks(due_date, status) 
-      WHERE due_date < NOW() AND status = 'pending';
+    -- Create index for tasks with due dates (overdue checks done at query time)
+    CREATE INDEX idx_tasks_due_status ON tasks(due_date, status) 
+      WHERE due_date IS NOT NULL AND status = 'pending';
     
     -- Add comments for documentation
     COMMENT ON TABLE tasks IS 'Tasks within projects with assignment and status tracking';
