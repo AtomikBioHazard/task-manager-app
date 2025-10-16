@@ -120,5 +120,5 @@ export const migration = {
   id: '004',
   name: 'create_tasks_table',
   description: 'Creates tasks table with status/priority enums, assignment functionality, and comprehensive indexes',
-  timestamp: '2025-10-15T00:33:00Z'
+  timestamp: new Date().toISOString()
 };

@@ -79,5 +79,5 @@ export const migration = {
   id: '003',
   name: 'create_project_members_table',
   description: 'Creates project members junction table with role-based permissions and indexes',
-  timestamp: '2025-10-15T00:33:00Z'
+  timestamp: new Date().toISOString()
 };

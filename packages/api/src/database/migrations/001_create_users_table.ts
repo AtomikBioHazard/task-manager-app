@@ -64,5 +64,5 @@ export const migration = {
   id: '001',
   name: 'create_users_table',
   description: 'Creates users table with UUID primary key, email uniqueness, and performance indexes',
-  timestamp: '2025-10-15T00:33:00Z'
+  timestamp: new Date().toISOString()
 };

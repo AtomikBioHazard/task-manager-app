@@ -219,6 +219,7 @@ export async function resetDatabase(db: Database): Promise<void> {
  */
 export const MIGRATION_INFO = {
   totalMigrations: migrations.length,
+  createdDate: new Date().toISOString(),
   description: 'Complete database schema for Task Manager application',
   tables: ['users', 'projects', 'project_members', 'tasks'],
   features: [
