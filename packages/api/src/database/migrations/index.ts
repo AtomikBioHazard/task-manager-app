@@ -138,7 +138,7 @@ export class MigrationRunner {
   /**
    * Rollback the last N migrations
    */
-  async rollbackMigrations(steps: number = 1): Promise<void> {
+  async rollbackMigrations(steps: number): Promise<void> {
     const executed = await this.getExecutedMigrations();
     const toRollback = executed.slice(-steps).reverse();
     if (toRollback.length === 0) return;
@@ -199,7 +199,7 @@ export async function runMigrations(db: Database): Promise<void> {
   await runner.runPendingMigrations();
 }
 
-export async function rollbackMigrations(db: Database, steps: number = 1): Promise<void> {
+export async function rollbackMigrations(db: Database, steps: number): Promise<void> {
   const runner = new MigrationRunner(db);
   await runner.rollbackMigrations(steps);
 }
@@ -219,7 +219,6 @@ export async function resetDatabase(db: Database): Promise<void> {
  */
 export const MIGRATION_INFO = {
   totalMigrations: migrations.length,
-  createdDate: '2025-10-15T00:33:00Z',
   description: 'Complete database schema for Task Manager application',
   tables: ['users', 'projects', 'project_members', 'tasks'],
   features: [

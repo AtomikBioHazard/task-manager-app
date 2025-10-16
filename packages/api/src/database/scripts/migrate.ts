@@ -77,8 +77,10 @@ const createDatabase = (pool: Pool): Database => {
 
 // Main migration CLI function
 async function main() {
-  const command = process.argv[2] || 'migrate';
-  const steps = parseInt(process.argv[3] || '1');
+  const command = process.argv[2];
+  if (!command) throw new Error('Command required. Available: migrate, rollback, status, reset');
+  
+  const steps = process.argv[3] ? parseInt(process.argv[3]) : undefined;
 
   const config = getDatabaseConfig();
   const pool = new Pool(config);
@@ -92,8 +94,14 @@ async function main() {
   const commands = {
     migrate: () => runner.runPendingMigrations(),
     up: () => runner.runPendingMigrations(),
-    rollback: () => runner.rollbackMigrations(steps),
-    down: () => runner.rollbackMigrations(steps),
+    rollback: () => {
+      if (!steps) throw new Error('Rollback requires number of steps as second argument');
+      return runner.rollbackMigrations(steps);
+    },
+    down: () => {
+      if (!steps) throw new Error('Rollback requires number of steps as second argument');
+      return runner.rollbackMigrations(steps);
+    },
     status: async () => {
       const status = await runner.getStatus();
       return status;
