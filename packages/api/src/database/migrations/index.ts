@@ -8,10 +8,10 @@
 import type { Database, Migration } from '#database/types';
 
 // Import all migration modules
-import * as migration001 from './001_create_users_table';
-import * as migration002 from './002_create_projects_table';
-import * as migration003 from './003_create_project_members_table';
-import * as migration004 from './004_create_tasks_table';
+import * as migration001 from '#database/migrations/001_create_users_table';
+import * as migration002 from '#database/migrations/002_create_projects_table';
+import * as migration003 from '#database/migrations/003_create_project_members_table';
+import * as migration004 from '#database/migrations/004_create_tasks_table';
 
 /**
  * Registered migrations in execution order
@@ -97,44 +97,31 @@ export class MigrationRunner {
   async runMigrationUp(migration: Migration): Promise<void> {
     const startTime = Date.now();
     
-    try {
-      await migration.up(this.db);
-      
-      const executionTime = Date.now() - startTime;
-      const checksum = this.calculateChecksum(migration);
-      
-      await this.db.query(`
-        INSERT INTO schema_migrations (id, name, filename, execution_time_ms, checksum)
-        VALUES ($1, $2, $3, $4, $5)
-      `, [migration.id, migration.name, migration.filename, executionTime, checksum]);
-      
-      console.log(`✅ Migration ${migration.id} (${migration.name}) completed in ${executionTime}ms`);
-    } catch (error) {
-      console.error(`❌ Migration ${migration.id} (${migration.name}) failed:`, error);
-      throw error;
-    }
+    await migration.up(this.db).catch((error) => {
+      throw new Error(`Migration ${migration.id} (${migration.name}) failed: ${error.message}`);
+    });
+    
+    const executionTime = Date.now() - startTime;
+    const checksum = this.calculateChecksum(migration);
+    
+    await this.db.query(`
+      INSERT INTO schema_migrations (id, name, filename, execution_time_ms, checksum)
+      VALUES ($1, $2, $3, $4, $5)
+    `, [migration.id, migration.name, migration.filename, executionTime, checksum]);
   }
 
   /**
    * Run a single migration down
    */
   async runMigrationDown(migration: Migration): Promise<void> {
-    const startTime = Date.now();
+    await migration.down(this.db).catch((error) => {
+      throw new Error(`Migration rollback ${migration.id} (${migration.name}) failed: ${error.message}`);
+    });
     
-    try {
-      await migration.down(this.db);
-      
-      await this.db.query(
-        'DELETE FROM schema_migrations WHERE id = $1',
-        [migration.id]
-      );
-      
-      const executionTime = Date.now() - startTime;
-      console.log(`⬇️  Migration ${migration.id} (${migration.name}) rolled back in ${executionTime}ms`);
-    } catch (error) {
-      console.error(`❌ Migration rollback ${migration.id} (${migration.name}) failed:`, error);
-      throw error;
-    }
+    await this.db.query(
+      'DELETE FROM schema_migrations WHERE id = $1',
+      [migration.id]
+    );
   }
 
   /**
@@ -142,21 +129,10 @@ export class MigrationRunner {
    */
   async runPendingMigrations(): Promise<void> {
     await this.ensureMigrationsTable();
-    
     const pending = await this.getPendingMigrations();
+    if (pending.length === 0) return;
     
-    if (pending.length === 0) {
-      console.log('✅ No pending migrations');
-      return;
-    }
-
-    console.log(`🚀 Running ${pending.length} pending migration(s)...`);
-    
-    for (const migration of pending) {
-      await this.runMigrationUp(migration);
-    }
-    
-    console.log(`🎉 All migrations completed successfully`);
+    for (const migration of pending) await this.runMigrationUp(migration);
   }
 
   /**
@@ -165,22 +141,12 @@ export class MigrationRunner {
   async rollbackMigrations(steps: number = 1): Promise<void> {
     const executed = await this.getExecutedMigrations();
     const toRollback = executed.slice(-steps).reverse();
-    
-    if (toRollback.length === 0) {
-      console.log('✅ No migrations to rollback');
-      return;
-    }
-
-    console.log(`⏪ Rolling back ${toRollback.length} migration(s)...`);
+    if (toRollback.length === 0) return;
     
     for (const migrationId of toRollback) {
       const migration = migrations.find(m => m.id === migrationId);
-      if (migration) {
-        await this.runMigrationDown(migration);
-      }
+      if (migration) await this.runMigrationDown(migration);
     }
-    
-    console.log(`🎉 Rollback completed successfully`);
   }
 
   /**
