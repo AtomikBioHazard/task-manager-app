@@ -6,7 +6,7 @@
  */
 
 import type { Database } from '#database/types';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 /**
  * Sample users for development/testing
