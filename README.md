@@ -152,6 +152,36 @@ docker-compose ps
 docker-compose logs postgres
 ```
 
+### Seed Data for Development
+
+The project includes sample seed data for development and testing:
+
+```bash
+# Seed database with sample data
+npm run db:seed
+
+# Clear seed data
+npm run db:seed:clear
+
+# Force reseed (clears then seeds)
+npm run db:seed:force
+```
+
+**Sample accounts created:**
+- john.doe@example.com (password: password123)
+- jane.smith@example.com (password: password123)
+- bob.wilson@example.com (password: password123)
+- alice.johnson@example.com (password: password123)
+- demo@example.com (password: demo123)
+
+**Sample data includes:**
+- 5 users
+- 5 projects (Website Redesign, Mobile App, Marketing Campaign, Database Migration, Customer Portal)
+- 16 tasks with various statuses (completed, in_progress, todo)
+- Project members and task assignments
+
+**WARNING:** Only use seed data in development/testing environments!
+
 ## Development Workflow
 
 - Feature branches: `[agent-name]/[task-id]-[description]`
@@ -175,8 +205,10 @@ See `/01-planning/` for detailed task breakdown and technical decisions.
 ```bash
 # Database
 npm run db:test              # Test database connection
-npm run db:migrate           # Run database migrations (when available)
-npm run db:seed              # Seed development data (when available)
+npm run db:migrate           # Run database migrations
+npm run db:seed              # Seed development data
+npm run db:seed:clear        # Clear seed data from database
+npm run db:seed:force        # Force reseed (clears then seeds)
 
 # Development
 npm run dev                  # Start all services
